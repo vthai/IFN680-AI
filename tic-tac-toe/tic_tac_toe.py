@@ -10,7 +10,6 @@ class TicTacToeBoard(object):
         self.n = n
         self.board = array.array('b', [0]*n*n)
         self.symbol = {0: '.', 1: 'x', -1: 'o'}
-        self.potential_win = {}
         self.turn = 1;
 
     def display(self):
@@ -41,62 +40,38 @@ class TicTacToeBoard(object):
         return r*self.n+c
 
     def record(self, move):
-        print 'recording', move, 'for player', self.turn
+        #print 'recording', move, 'for player', self.turn
         if move is not None:
             self.board[move] = self.turn
-
-            append_list = []
-
-            left = move - 1 if move%self.n > 0 else None
-            right = move + 1 if move%self.n < self.n - 1 else None
-            if left:
-                append_list.append(left)
-            if right:
-                append_list.append(right)
-
-            top = move % self.n if move/self.n > 0 else None
-            down = move + self.n if move + self.n < self.n * self.n else None
-            if top:
-                append_list.append(top)
-            if down:
-                append_list.append(down)
-
-            left_top = top - 1 if top and top%self.n > 0 else None
-            left_down = down - 1 if down and down%self.n > 0 else None
-            if left_top:
-                append_list.append(left_top)
-            if left_down:
-                append_list.append(left_down)
-
-            right_top = top + 1 if top and top%self.n < self.n - 1 else None
-            right_down = down + 1 if down and down%self.n < self.n - 1 else None
-            if right_top:
-                append_list.append(right_top)
-            if right_down:
-                append_list.append(right_down)
-
-            print 'potential list', append_list
-            for a in append_list:
-                if self.board[a] == self.turn:
-                    collection = self.potential_win.get(a)
-                    if collection:
-                        collection.add(self.turn)
-                    else:
-                        collection = Set([self.turn])
-
             self.turn = self.turn * -1
-
-            print 'potential_win:', self.potential_win
 
     def legal_moves(self):
         return [i for i in range(self.n * self.n) if self.board[i] == 0]
 
     def game_ends(self, last_move):
-        p = self.potential_win.get(last_move)
-        if p is not None:
-            t = p.get(self.turn * -1) # previous turn
-            if t is not None:
-                return True
+        if last_move is None:
+            return False
+        # horizontal
+        left = last_move - 3 if last_move - 3 >= 0 else 0
+        right = last_move + 3 if last_move + 3 < self.n else self.n - 1
+        sum = 0;
+        for i in range(left, right + 1):
+            sum = sum + self.board[i]
+
+        if sum != 3 and sum != -3:
+            top = (last_move - self.n)%self.n if (last_move - self.n)%self.n >= 0 else last_move - self.i2rc(last_move)[0]*self.n
+            down = (last_move + self.n * 2) if (last_move + self.n * 2) < self.n * self.n else last_move + (self.n * (self.n - self.i2rc(last_move)[0] - 1))
+            print 'top down', top, down, last_move
+            sum = 0
+            for i in range(top, down/self.n + 1):
+                sum = sum + self.board[i * self.n]
+
+        print 'sum', sum
+        last_move_player = self.turn * -1
+        if last_move_player == 1 and sum == 3:
+            return True
+        elif last_move_player == -1 and sum == -3:
+            return True
         return False
 
 class Game(object):
