@@ -203,16 +203,24 @@ class Minmax_player(Player):
         # try each move
         for m in self.game.legal_moves():
             #print ("Try this step", m)
+            from_opponent = (self.game.turn == -1)
             self.game.do_move(m)
-            
 #“INSERT YOUR CODE HERE”
             
             #val = self.min(self.maxply - 1)
             val = self.minimax_value_prune(self.maxply - 1, -math.inf, math.inf)
             #val = self.minimax_value(self.maxply - 1)
 
-            if best is None or val > best[0]:
-                best = (val, m)
+            if from_opponent: # opponent => min player
+                if best is None or val < best[0]:
+                    best = (val, m)
+            else: # AI => max player
+                if best is None or val > best[0]:
+                    best = (val, m)
+
+            #if best is None or val > best[0]:
+            #    best = (val, m)
+
             #print ("Revert step")
             self.game.undo_move()
 
