@@ -52,15 +52,22 @@ class TicTacToeBoard(object):
         if last_move is None:
             return False
         # horizontal
-        left = last_move - 3 if last_move - 3 >= 0 else 0
-        right = last_move + 3 if last_move + 3 < self.n else self.n - 1
-        print 'left, right', left, right
+        cr, cc = self.i2rc(last_move)
+
+        lr, lc = self.i2rc(last_move - 2)
+
+        left = last_move - 2 if lr == cr else 0
+        rr, rc = self.i2rc(last_move + 2)
+
+        right = last_move + 2 if rr == cr else self.n * (cr+1) - 1
+        print 'left, right', left, right, last_move
         sum = 0;
         for i in range(left, right + 1):
             sum = sum + self.board[i]
 
         print 'sum h', sum
         if sum != 3 and sum != -3:
+            # vertical
             top = (last_move - self.n)%self.n if (last_move - self.n)%self.n >= 0 else last_move - self.i2rc(last_move)[0]*self.n
             down = (last_move + self.n * 2) if (last_move + self.n * 2) < self.n * self.n else last_move + (self.n * (self.n - self.i2rc(last_move)[0] - 1))
             sum = 0
