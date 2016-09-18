@@ -10,7 +10,7 @@ from IFN680_AIMA.utils import *
     There are a set of 5 cards, 2/3 of them can be Kings, they are all face down
 '''
 
-kingProb = 2.0/5
+kingProb = 1.0/10  # based on n!/(n-k)!k! = 5!/(5-2)!2! = 10
 
 '''
     define variable called Cardi = {True, False} to denote that whether a card is a King or not
@@ -49,6 +49,7 @@ events = all_events_jpd(var_names, cards, {})
 '''
 for event in events:
     countTrue = 0
+    
     for _, value in event.items():
         if value == True:
             countTrue += 1
@@ -58,12 +59,16 @@ for event in events:
         prob = 0
     cards[event] = prob
 
+assert(cards.is_valid())
+
 print cards.show_approx()
 
+print '\nIs it valid?', cards.is_valid()
+
 '''
-    If no card has been flipped, flipping at any position can be a King with a probability of 2/5 = 0.4
+    If no card has been flipped, flipping at any position can be a King with a probability of 4/10 = 0.4
 '''
-print '\nIf no card has been flipped, flipping at any position can be a King with a probability of 2/5 = 0.4'
+print '\nIf no card has been flipped, flipping at any position can be a King with a probability of 4/10 = 0.4'
 p_King = enumerate_joint_ask('Card1', {}, cards)
 print 'P(C1=T) =', p_King[True], ',P(C1=F) =', p_King[False]
 
